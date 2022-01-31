@@ -1,0 +1,40 @@
+﻿@page "/"
+@inject HttpClient Http
+@using Data
+
+<PageTitle>Index</PageTitle>
+
+<button class="btn btn-primary" @onclick="GetTempData">Get TempData</button>
+
+@if (tempDatas == null) {
+    <p><em>Loading...</em></p>
+} else {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp(℃)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tempData in tempDatas) {
+                <tr>
+                    <td>@tempData.DateTime</td>
+                    <td>@tempData.Temp</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<TempData> tempDatas = new List<TempData>();
+
+    private async Task GetTempData() {
+        var tempData = await Http.GetFromJsonAsync<TempData>("api/temp");
+        if (tempData != null)
+        {
+            tempDatas.Add(tempData);
+        }
+    }
+}
